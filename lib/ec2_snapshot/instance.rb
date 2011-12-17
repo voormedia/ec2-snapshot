@@ -1,3 +1,4 @@
+require "date"
 require "right_aws"
 
 module Ec2Snapshot
@@ -31,6 +32,16 @@ module Ec2Snapshot
           volume.freeze_filesystem do
             volume.create_snapshot
           end
+        end
+      end
+    end
+
+    def delete_snapshots(cut_off_date = Date.today << 3)
+      # this function requires a tag called Hostname to be set for each snapshot of the current instance
+      @ec2.describe_snapshots(:filters => {'tag:Hostname' => hostname}).each do |snapshot|
+        if Date.parse(snapshot[:aws_started_at]) <= cut_off_date
+          p "deleting snapshot #{snapshot[:aws_id]}" if @verbose
+          @ec2.delete_snapshot(snapshot[:aws_id])
         end
       end
     end

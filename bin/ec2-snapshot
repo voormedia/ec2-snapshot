@@ -2,6 +2,7 @@
 
 require "ec2_snapshot"
 require "optparse"
+require "date"
 
 options = Hash.new
 
@@ -9,38 +10,42 @@ optparse = OptionParser.new do |opts|
   opts.banner = "Usage: ec2-snapshot [options]"
 
   options[:volume_type] = :all
-  opts.on('--volume-type OPT', [:all, :root, :data], "Volume types that need to be snapshotted (all/root/data)") do |volume_type|
+  opts.on("--volume-type OPT", [:all, :root, :data], "Volume types that need to be snapshotted (all/root/data)") do |volume_type|
     options[:volume_type] = volume_type
   end
 
   options[:aws_access_key] = ENV["AWS_ACCESS_KEY_ID"]
-  opts.on('--aws-access-key ACCESS_KEY', 'AWS Access Key') do |access_key|
+  opts.on("--aws-access-key ACCESS_KEY", "AWS Access Key") do |access_key|
     options[:aws_access_key] = access_key
   end
 
   options[:aws_secret_access_key] = ENV["AWS_SECRET_ACCESS_KEY"]
-  opts.on('--aws-secret-access-key SECRET_ACCESS_KEY', 'AWS Secret Access Key') do |secret_access_key|
+  opts.on("--aws-secret-access-key SECRET_ACCESS_KEY", "AWS Secret Access Key") do |secret_access_key|
     options[:aws_secret_access_key] = secret_access_key
   end
 
-  opts.on('--aws-region REGION', 'AWS Region') do |region|
+  opts.on("--aws-region REGION", "AWS Region") do |region|
     options[:aws_region] = region
   end
 
-  opts.on('--before BEFORE', 'Shell command to run before volume is snapshotted') do |before|
+  opts.on("--before BEFORE", "Shell command to run before volume is snapshotted") do |before|
     options[:before] = before
   end
 
-  opts.on('--after AFTER', 'Shell command to run after volume is snapshotted') do |after|
+  opts.on("--after AFTER", "Shell command to run after volume is snapshotted") do |after|
     options[:after] = after
   end
 
+  opts.on("--delete-older-than MONTHS", "Delete snapshots for this instance that are older than # months") do |months|
+    options[:delete_older_than] = months.to_i
+  end
+
   options[:verbose] = false
-  opts.on('-v', '--verbose', 'Display progress output') do |verbose|
+  opts.on("-v", "--verbose", "Display progress output") do |verbose|
     options[:verbose] = verbose
   end
 
-  opts.on('-h', '--help', 'Display this screen') do
+  opts.on("-h", "--help", "Display this screen") do
     puts opts
     exit
   end
@@ -54,3 +59,4 @@ instance = Ec2Snapshot::Instance.new(options)
 instance.enable_rootvol_snapshot if [:all, :root].include?(options[:volume_type])
 instance.enable_datavol_snapshot if [:all, :data].include?(options[:volume_type])
 instance.create_snapshots
+instance.delete_snapshots(Date.today << options[:delete_older_than]) if options.include?(:delete_older_than)
