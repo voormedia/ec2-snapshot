@@ -1,0 +1,1 @@
+require 'ec2_snapshot'
