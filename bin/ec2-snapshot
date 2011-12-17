@@ -4,7 +4,7 @@ require "ec2_snapshot"
 require "optparse"
 
 options = Hash.new
- 
+
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: ec2-snapshot [options]"
 

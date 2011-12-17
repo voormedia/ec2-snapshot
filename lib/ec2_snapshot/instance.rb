@@ -1,7 +1,7 @@
 require "right_aws"
 
 module Ec2Snapshot
-	class Instance
+  class Instance
     attr_accessor :ec2, :ec2_info, :create_rootvol_snapshot, :create_datavol_snapshot, :before, :after, :verbose
 
     def initialize(options = {})
@@ -66,5 +66,5 @@ module Ec2Snapshot
     def volumes
       @ec2_info[:block_device_mappings].collect{ |v| Ec2Snapshot::Volume.new(self, v[:ebs_volume_id], v[:device_name]) }
     end
-	end
+  end
 end

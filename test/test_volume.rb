@@ -17,7 +17,7 @@ class VolumeTest < MiniTest::Unit::TestCase
   # xfs_device_name
   def test_xfs_device_name_should_return_a_string
     vol = Ec2Snapshot::Volume.new(@instance, "volume-id", "/dev/sdf")
-  	assert_instance_of String, vol.xfs_device_name
+    assert_instance_of String, vol.xfs_device_name
   end
 
   def test_xfs_device_name_should_replace_device_name

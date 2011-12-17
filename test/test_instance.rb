@@ -18,9 +18,9 @@ class InstanceTest < MiniTest::Unit::TestCase
 
   # new
   def test_create_new_instance_should_fail_if_required_ec2_credentials_are_unavailable
-  	assert_raises NoMethodError do
-  		Ec2Snapshot::Instance.new(nil)
-  	end
+    assert_raises NoMethodError do
+      Ec2Snapshot::Instance.new(nil)
+    end
   end
 
   def test_create_new_instance_should_not_fail_if_required_ec2_credentials_are_available

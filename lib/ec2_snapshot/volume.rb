@@ -1,6 +1,6 @@
 module Ec2Snapshot
   class Volume
-  	attr_accessor :instance, :volume_id, :device_name, :mount_point, :file_system
+    attr_accessor :instance, :volume_id, :device_name, :mount_point, :file_system
 
     def initialize(instance, volume_id, device_name)
       @instance = instance
@@ -35,7 +35,7 @@ module Ec2Snapshot
       p "creating and tagging snapshot" if @instance.verbose
       snapshot = @instance.ec2.create_snapshot(@volume_id, "#{@instance.hostname}: automated snapshot #{@device_name} (#{@volume_id})")
       # the only way to set the name of a snapshot is by creating a name tag for the snapshot
-      @instance.ec2.create_tags(snapshot[:aws_id], { "Name" => "#{@instance.hostname} (#{@device_name})" })
+      @instance.ec2.create_tags(snapshot[:aws_id], { "Name" => "#{@instance.hostname} (#{@device_name})", "Hostname" => @instance.hostname })
     end
 
     def xfs_device_name
