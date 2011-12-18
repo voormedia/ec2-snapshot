@@ -48,7 +48,7 @@ class InstanceTest < MiniTest::Unit::TestCase
     Kernel.expects(:system).with("test")
     @instance.after = "test"
     @instance.custom_actions do
-      fail
+      raise Exception
     end
   end
 
