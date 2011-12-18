@@ -14,6 +14,32 @@ class VolumeTest < MiniTest::Unit::TestCase
     @instance = Ec2Snapshot::Instance.new({ :access_key => "accesskey", :secret_access_key => "secretkey", :region => "region" })
   end
 
+  # freeze_filesystem
+  def test_freeze_filesystem_should_freeze_and_unfreeze_filesystem_if_filesystem_is_xfs
+    vol = Ec2Snapshot::Volume.new(@instance, "volume-id", "/dev/sdf")
+    vol.file_system = "xfs"
+    Kernel.expects(:system).with("xfs_freeze -f /srv")
+    Kernel.expects(:system).with("xfs_freeze -u /srv")
+    vol.freeze_filesystem
+  end
+
+  def test_freeze_filesystem_shouldnt_freeze_and_unfreeze_filesystem_if_filesystem_is_not_xfs
+    vol = Ec2Snapshot::Volume.new(@instance, "volume-id", "/dev/sdf")
+    vol.file_system = "fat32"
+    Kernel.expects(:system).never
+    vol.freeze_filesystem
+  end
+
+  def test_freeze_filesystem_should_freeze_and_unfreeze_filesystem_if_filesystem_is_xfs_and_block_throws_an_exception
+    vol = Ec2Snapshot::Volume.new(@instance, "volume-id", "/dev/sdf")
+    vol.file_system = "xfs"
+    Kernel.expects(:system).with("xfs_freeze -f /srv")
+    Kernel.expects(:system).with("xfs_freeze -u /srv")
+    vol.freeze_filesystem do
+      raise Exception
+    end
+  end
+
   # xfs_device_name
   def test_xfs_device_name_should_return_a_string
     vol = Ec2Snapshot::Volume.new(@instance, "volume-id", "/dev/sdf")

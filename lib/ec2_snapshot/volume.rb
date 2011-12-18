@@ -18,15 +18,17 @@ module Ec2Snapshot
     def freeze_filesystem(&block)
       if @mount_point and @file_system == "xfs"
         p "freezing XFS filesystem" if @instance.verbose
-        system("xfs_freeze -f #{@mount_point}")
+        Kernel.system("xfs_freeze -f #{@mount_point}")
       end
       
       begin
         yield
+      rescue Exception => ex
+        p "exception thrown during snapshot creation: #{ex}" if @verbose
       ensure
         if @mount_point and @file_system == "xfs"
           p "unfreezing XFS filesystem" if @instance.verbose
-          system("xfs_freeze -u #{@mount_point}")
+          Kernel.system("xfs_freeze -u #{@mount_point}")
         end
       end
     end

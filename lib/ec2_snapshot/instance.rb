@@ -49,14 +49,16 @@ module Ec2Snapshot
     def custom_actions(&block)
       if @before
         p "executing before command" if @verbose
-        system(@before)
+        Kernel.system(@before)
       end
       begin
         yield
+      rescue Exception => ex
+        p "exception thrown during snapshot creation: #{ex}" if @verbose
       ensure
         if @after
           p "executing after command" if @verbose
-          system(@after)
+          Kernel.system(@after)
         end
       end
     end

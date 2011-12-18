@@ -27,6 +27,31 @@ class InstanceTest < MiniTest::Unit::TestCase
     assert_instance_of Ec2Snapshot::Instance, @instance
   end
 
+  # custom_actions
+  def test_custom_actions_should_execute_before_action_if_set
+    Kernel.expects(:system).with("test")
+    @instance.before = "test"
+    @instance.custom_actions do
+      true
+    end
+  end
+
+  def test_custom_actions_should_execute_after_action_if_set
+    Kernel.expects(:system).with("test")
+    @instance.after = "test"
+    @instance.custom_actions do
+      true
+    end
+  end
+
+  def test_custom_actions_should_execute_after_action_even_if_block_throws_an_exception
+    Kernel.expects(:system).with("test")
+    @instance.after = "test"
+    @instance.custom_actions do
+      fail
+    end
+  end
+
   # enable_rootvol_snapshot
   def test_enable_rootvol_snapshot_should_return_true
     assert @instance.enable_rootvol_snapshot
