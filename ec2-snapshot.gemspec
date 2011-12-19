@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["mattijsvandruenen"]
   gem.email         = ["m.vandruenen@voormedia.com"]
   gem.description   = %q{EC2 EBS Volume Snapshotting}
-  gem.summary       = %q{Provides a library that can easily be integrated into Chef for automatic snapshotting of EBS volumes.}
+  gem.summary       = %q{Create consistent snapshots of EBS volumes on Amazon EC2 instances.}
   gem.homepage      = "http://voormedia.com"
 
   gem.add_runtime_dependency "right_aws"

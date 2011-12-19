@@ -42,9 +42,22 @@ Execute <tt>ec2-snapshot -h</tt> to get an overview of the arguments that the ex
 supports.
 
 
+Inspiration
+-----------
+
+EC2-snapshot was inspired by [ec2-consistent-snapshot](https://launchpad.net/ec2-consistent-snapshot) and 
+its Ruby port [ec2-consistent-snapshot-rb](http://rubygems.org/gems/ec2-consistent-snapshot-rb).
+
+
 About EC2-snapshot
 ------------------
 
 EC2-snapshot was created by Mattijs van Druenen (m.vandruenen *at* voormedia.com)
 
 Copyright 2011 Voormedia - [www.voormedia.com](http://www.voormedia.com/)
+
+
+License
+-------
+
+Rails ERD is released under the MIT license.
