@@ -80,6 +80,20 @@ For a complete list of supported options, please execute
 	ec2-snapshot -h
 
 
+Security
+--------
+
+The most secure way of using EC2-snapshot is to create a new user with AWS IAM and allow that user to only execute a 
+specific set of actions.
+The following actions are required:
+
+* ec2:CreateSnapshot
+* ec2:CreateTags
+* ec2:DeleteSnapshot
+* ec2:DescribeInstances
+* ec2:DescribeSnapshots
+
+
 Inspiration
 -----------
 
