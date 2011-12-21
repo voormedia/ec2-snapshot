@@ -24,7 +24,7 @@ Features
 * Recognizes XFS filesystems, and looks up mount points automatically
 * Freezes XFS filesystems while creating the snapshot, resulting in a consistent snapshot
 * Easy integration within Chef, requiring a very simple recipe that only requires (globally defined) AWS credentials and a region
-* Easy integration within your own scripts with either the executable or by instantiating the Ec2Snapshot::Instance class yourself
+* Easy integration within your own scripts with either the executable or by instantiating the `Ec2Snapshot::Instance` class yourself
 * Custom actions that need to be executed before and/or after the snapshot is created can be easily configured
 
 
