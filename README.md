@@ -53,7 +53,9 @@ If the environment variable is not set the value should be provided as an argume
 
 The gem makes a distinction between root volumes and data volumes. The root volume is the volume on which the OS 
 is installed, while the data volumes are other volumes mounted on the same instance that could for example be used to store 
-application specific data. By default, EC2-snapshot will attempt to create snapshots of all volumes mounted on the 
+application specific data.
+
+By default, EC2-snapshot will attempt to create snapshots of all volumes mounted on the 
 current instance. In case you only need snapshots of the data volumes, which could be a valid case when using Chef, 
 you can easily specify that by using the `--volume-type` argument:
 
