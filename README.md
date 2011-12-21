@@ -84,4 +84,4 @@ Copyright 2011 Voormedia - [www.voormedia.com](http://www.voormedia.com/)
 License
 -------
 
-Rails ERD is released under the MIT license.
+EC2-snapshot is released under the MIT license.
