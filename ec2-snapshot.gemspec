@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["m.vandruenen@voormedia.com"]
   gem.description   = %q{EC2 EBS Volume Snapshotting}
   gem.summary       = %q{Create consistent snapshots of EBS volumes on Amazon EC2 instances.}
-  gem.homepage      = "http://voormedia.com"
+  gem.homepage      = "https://github.com/voormedia/ec2-snapshot"
 
   gem.add_runtime_dependency "right_aws"
   gem.add_development_dependency "minitest", "~> 2.8.0"

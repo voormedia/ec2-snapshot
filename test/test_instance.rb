@@ -4,15 +4,15 @@ require File.expand_path("../helper", __FILE__)
 
 class InstanceTest < MiniTest::Unit::TestCase
   def setup
-    # mock system calls
+    # Mock system calls
     Ec2Snapshot::Instance.any_instance.stubs(:`).returns("output")
     Ec2Snapshot::Volume.any_instance.stubs(:`).returns("/dev/xvdf /srv xfs rw,noatime,attr2,delaylog,noquota 0 0")
-    # mock right_aws init, return mock object and mock methods on that object
+    # Mock right_aws init, return mock object and mock methods on that object
     m = MiniTest::Mock.new
     RightAws::Ec2.stubs(:new).returns(m)
     m.stubs(:describe_instances).returns([{:root_device_type=>"ebs", :root_device_name=>"/dev/sda1", :block_device_mappings=>[{:device_name=>"/dev/sda1", :ebs_volume_id=>"vol-id1", :ebs_status=>"attached", :ebs_attach_time=>"2011-12-06T14:48:27.000Z", :ebs_delete_on_termination=>true}, {:device_name=>"/dev/sdf", :ebs_volume_id=>"vol-id2", :ebs_status=>"attached", :ebs_attach_time=>"2011-12-06T14:48:27.000Z", :ebs_delete_on_termination=>false}]}])
 
-    # init Ec2Snapshot::Instance to work with
+    # Init Ec2Snapshot::Instance to work with
     @instance = Ec2Snapshot::Instance.new({ :access_key => "accesskey", :secret_access_key => "secretkey", :region => "region" })
   end
 

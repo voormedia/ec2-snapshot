@@ -17,30 +17,31 @@ module Ec2Snapshot
 
     def freeze_filesystem(&block)
       if @mount_point and @file_system == "xfs"
-        p "freezing XFS filesystem" if @instance.verbose
+        puts "freezing XFS filesystem" if @instance.verbose
         Kernel.system("xfs_freeze -f #{@mount_point}")
       end
       
       begin
         yield
       rescue Exception => ex
-        p "exception thrown during snapshot creation: #{ex}" if @verbose
+        puts "exception thrown during snapshot creation: #{ex}" if @verbose
       ensure
         if @mount_point and @file_system == "xfs"
-          p "unfreezing XFS filesystem" if @instance.verbose
+          puts "unfreezing XFS filesystem" if @instance.verbose
           Kernel.system("xfs_freeze -u #{@mount_point}")
         end
       end
     end
 
     def create_snapshot
-      p "creating and tagging snapshot" if @instance.verbose
+      puts "creating and tagging snapshot" if @instance.verbose
       snapshot = @instance.ec2.create_snapshot(@volume_id, "#{@instance.hostname}: automated snapshot #{@device_name} (#{@volume_id})")
-      # the only way to set the name of a snapshot is by creating a name tag for the snapshot
+      # The only way to set the name of a snapshot is by creating a name tag for the snapshot
       @instance.ec2.create_tags(snapshot[:aws_id], { "Name" => "#{@instance.hostname} (#{@device_name})", "Hostname" => @instance.hostname })
     end
 
     def xfs_device_name
+      # Required for Ubuntu Natty Narwhal and up, which uses xvdX, while Amazon uses sdX
       @device_name.gsub("/sd", "/xvd")
     end
 
@@ -50,7 +51,7 @@ module Ec2Snapshot
       mounts = %x[cat /proc/mounts].split("\n")
       mounts.each do |mount|
         parts = mount.split(" ")
-        if parts.first == xfs_device_name
+        if [@device_name, xfs_device_name].include?(parts.first)
           @mount_point = parts[1]
           @file_system = parts[2]
           break

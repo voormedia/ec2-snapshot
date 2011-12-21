@@ -5,22 +5,26 @@ EC2-snapshot is gem that allows you to easily create snapshots for mounted EBS v
 an EC2 instance.
 
 The idea originated from the wish of automating snapshot creation for EC2 instances and making
-it easy to integrate it into chef.
+it easy to integrate it into Chef.
 
-The gem was written with the idea of it running only on the EC2 instance for which snapshots
-need to be created. Because we wanted to use it with chef, we needed to keep configuration to a minimum.
+EC2-snapshot was written with the idea of it running only on the EC2 instance for which snapshots
+need to be created. Because we wanted to use it with Chef, we needed to keep configuration to a minimum.
 There is no need to provide an instance id or volume ids, as that will already be retrieved on the 
 instance itself. The only necessities are the AWS credentials, region and an option to set which types
 of volumes need to be snapshotted.
+
+Therefore, the current implementation doesn't support the case of using a snapshotting server that creates snapshots 
+for all volumes. It is ment to run on all servers that require snapshots to be created of its volumes.
+
 
 Requirements
 ------------
 
 There are some requirements for using this gem:
 
-* the gem only works on Linux, since it has dependencies on files such as /etc/hostname and /proc/mounts
-* wget needs to be installed. This is required to automatically retrieve the current instance id
-* xfs_freeze needs to be installed in order to be able to freeze a XFS filesystem to get a consistent snapshot
+* The gem only works on Linux, as it has dependencies on files such as /etc/hostname and /proc/mounts
+* `wget` needs to be installed. This is required to automatically retrieve the current instance id
+* `xfs_freeze` (included in xfsprogs package) needs to be installed in order to be able to freeze a XFS filesystem to get a consistent snapshot
 
 
 Getting started
@@ -28,7 +32,7 @@ Getting started
 
 Installing the Gem is pretty straighforward:
 
-* Install the gem with <tt>gem install ec2-snapshot</tt>
+	gem install ec2-snapshot
 
 Note that /etc/hostname is used to get the name of the current instance.
 Also /proc/mounts is used to retrieve information on the filesystems to be snapshotted.
@@ -38,8 +42,23 @@ Using the executable
 --------------------
 
 An executable has been provided to easily use the gem within your own scripts.
-Execute <tt>ec2-snapshot -h</tt> to get an overview of the arguments that the executable 
-supports.
+
+The executable requires a few mandatory arguments. These are:
+* `--aws-access-key ACCESS_KEY`: The access key defaults to ENV["AWS_ACCESS_KEY_ID"]. 
+If the environment variable is not set the value should be provided as an argument while using the executable.
+* `--aws-secret-access-key KEY`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
+If the environment variable is not set the value should be provided as an argument while using the executable.
+* `--aws-region`: The region on which the volumes have been created. Examples are eu-west-1 and us-west-1.
+
+The gem makes a distinction between root volumes and data volumes. The root volume is the volume on which the OS 
+is installed, while the data volumes are other volumes mounted on the same instance that could for example be used to store 
+application specific data. By default, EC2-snapshot will attempt to create snapshots of all volumes mounted on the 
+current instance. In case you only need snapshots of the data volumes, which could be a valid case when using Chef, 
+you can easily specify that by using the `--volume-type` argument:
+
+	ec2-snapshot --aws-access-key ACCESS_KEY --aws-secret-access-key KEY --aws-region us-west-1 --volume-type data
+
+For a complete list of supported arguments, please execute `ec2-snapshot -h`.
 
 
 Inspiration
