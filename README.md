@@ -61,7 +61,9 @@ you can easily specify that by using the `--volume-type` argument:
 
 	ec2-snapshot --aws-access-key ACCESS_KEY --aws-secret-access-key KEY --aws-region us-west-1 --volume-type data
 
-For a complete list of supported arguments, please execute `ec2-snapshot -h`.
+For a complete list of supported arguments, please execute
+	
+	`ec2-snapshot -h`.
 
 
 Inspiration
