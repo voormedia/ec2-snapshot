@@ -79,6 +79,9 @@ For a complete list of supported options, please execute
 	
 	ec2-snapshot -h
 
+Take note that `xfs_freeze` requires the process to run with root privileges (sudo), otherwise the XFS filesystem 
+cannot be frozen.
+
 
 Security
 --------
