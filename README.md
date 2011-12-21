@@ -85,6 +85,7 @@ Security
 
 The most secure way of using EC2-snapshot is to create a new user with AWS IAM and allow that user to only execute a 
 specific set of actions.
+
 The following actions are required:
 
 * ec2:CreateSnapshot
