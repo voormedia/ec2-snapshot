@@ -14,7 +14,7 @@ instance itself. The only necessities are the AWS credentials, region and an opt
 of volumes need to be snapshotted.
 
 Therefore, the current implementation doesn't support the case of using a snapshotting server that creates snapshots 
-for all volumes. It is ment to run on all servers that require snapshots to be created of its volumes.
+for all volumes. It is meant to run on all servers that require snapshots to be created of its volumes.
 
 
 Requirements
@@ -30,7 +30,7 @@ There are some requirements for using this gem:
 Getting started
 ---------------
 
-Installing the Gem is pretty straighforward:
+Installing the Gem is pretty straightforward:
 
 	gem install ec2-snapshot
 
