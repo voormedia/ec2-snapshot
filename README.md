@@ -22,7 +22,7 @@ Requirements
 
 There are some requirements for using this gem:
 
-* The gem only works on Linux, as it has dependencies on files such as /etc/hostname and /proc/mounts
+* The gem only works on Linux, as it has dependencies on files such as `/etc/hostname` and `/proc/mounts`
 * `wget` needs to be installed. This is required to automatically retrieve the current instance id
 * `xfs_freeze` (included in xfsprogs package) needs to be installed in order to be able to freeze a XFS filesystem to get a consistent snapshot
 
@@ -34,8 +34,8 @@ Installing the Gem is pretty straighforward:
 
 	gem install ec2-snapshot
 
-Note that /etc/hostname is used to get the name of the current instance.
-Also /proc/mounts is used to retrieve information on the filesystems to be snapshotted.
+Note that `/etc/hostname` is used to get the name of the current instance.
+Also `/proc/mounts` is used to retrieve information on the filesystems to be snapshotted.
 
 
 Using the executable
