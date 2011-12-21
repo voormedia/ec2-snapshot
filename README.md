@@ -17,6 +17,17 @@ Therefore, the current implementation doesn't support the case of using a snapsh
 for all volumes. It is meant to run on all servers that require snapshots to be created of its volumes.
 
 
+Features
+--------
+
+* No need to specify instance id and volume ids while using the gem
+* Recognizes XFS filesystems, and looks up mount points automatically
+* Freezes XFS filesystems while creating the snapshot, resulting in a consistent snapshot
+* Easy integration within Chef, requiring a very simple recipe that only requires (globally defined) AWS credentials and a region
+* Easy integration within your own scripts with either the executable or by instantiating the EC2Instance class yourself
+* Custom actions that need to be executed before and/or after the snapshot is created can be easily configured
+
+
 Requirements
 ------------
 
@@ -43,13 +54,16 @@ Using the executable
 
 An executable has been provided to easily use the gem within your own scripts.
 
-The executable requires a few mandatory arguments. These are:
+The executable requires a few mandatory details to be able to use your AWS account. These are:
 
-* `--aws-access-key ACCESS_KEY`: The access key defaults to ENV["AWS_ACCESS_KEY_ID"]. 
-If the environment variable is not set the value should be provided as an argument while using the executable.
-* `--aws-secret-access-key KEY`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
-If the environment variable is not set the value should be provided as an argument while using the executable.
-* `--aws-region`: The region on which the volumes have been created. Examples are eu-west-1 and us-west-1.
+* `AWS Access Key`: The access key defaults to ENV["AWS_ACCESS_KEY_ID"]. 
+If the environment variable is not set the value should be provided as an option while using the executable, 
+ie. `--aws-access-key KEY`
+* `AWS Secret Access Key`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
+If the environment variable is not set the value should be provided as an option while using the executable, 
+ie. `--aws-secret-access-key KEY`
+* `AWS Region: The region on which the volumes have been created. Needs to be provided as an option, 
+ie. `--aws-region eu-west-1`
 
 The gem makes a distinction between root volumes and data volumes. The root volume is the volume on which the OS 
 is installed, while the data volumes are other volumes mounted on the same instance that could for example be used to store 
@@ -57,11 +71,11 @@ application specific data.
 
 By default, EC2-snapshot will attempt to create snapshots of all volumes mounted on the 
 current instance. In case you only need snapshots of the data volumes, which could be a valid case when using Chef, 
-you can easily specify that by using the `--volume-type` argument:
+you can easily specify that by using the `--volume-type` option:
 
 	ec2-snapshot --aws-access-key ACCESS_KEY --aws-secret-access-key KEY --aws-region us-west-1 --volume-type data
 
-For a complete list of supported arguments, please execute
+For a complete list of supported options, please execute
 	
 	ec2-snapshot -h
 

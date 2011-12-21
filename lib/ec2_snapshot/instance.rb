@@ -66,10 +66,11 @@ module Ec2Snapshot
     def instance_id
       # See http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?AESDG-chapter-instancedata.html
       output = %x[wget -T 5 -t 1 -q -O - http://169.254.169.254/latest/meta-data/instance-id]
-      raise Exception, "Failed to retrieve the current instance id" if output.empty?
+      raise if output.empty?
       output
     rescue
-      raise Exception, "Failed to retrieve the current instance id"
+      # catch both empty output and missing wget
+      raise "Failed to retrieve the current instance id"
     end
 
     def hostname
