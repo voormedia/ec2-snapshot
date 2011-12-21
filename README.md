@@ -94,6 +94,9 @@ The following actions are required:
 * ec2:DescribeInstances
 * ec2:DescribeSnapshots
 
+By restricting the user to only these actions, you can make sure that the access keys required for EC2-instance cannot 
+be misused to manipulate the instances themselves.
+
 
 Inspiration
 -----------
