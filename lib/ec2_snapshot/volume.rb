@@ -51,6 +51,7 @@ module Ec2Snapshot
       mounts = %x[cat /proc/mounts].split("\n")
       mounts.each do |mount|
         parts = mount.split(" ")
+        # Make sure that both Amazons volume naming and Ubuntu naming is matched
         if [@device_name, xfs_device_name].include?(parts.first)
           @mount_point = parts[1]
           @file_system = parts[2]
