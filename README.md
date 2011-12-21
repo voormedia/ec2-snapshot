@@ -63,7 +63,7 @@ you can easily specify that by using the `--volume-type` argument:
 
 For a complete list of supported arguments, please execute
 	
-	`ec2-snapshot -h`.
+	ec2-snapshot -h
 
 
 Inspiration
