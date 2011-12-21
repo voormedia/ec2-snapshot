@@ -44,6 +44,7 @@ Using the executable
 An executable has been provided to easily use the gem within your own scripts.
 
 The executable requires a few mandatory arguments. These are:
+
 * `--aws-access-key ACCESS_KEY`: The access key defaults to ENV["AWS_ACCESS_KEY_ID"]. 
 If the environment variable is not set the value should be provided as an argument while using the executable.
 * `--aws-secret-access-key KEY`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
