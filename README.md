@@ -56,10 +56,10 @@ An executable has been provided to easily use the gem within your own scripts.
 
 The executable requires a few mandatory details to be able to use your AWS account. These are:
 
-* `AWS Access Key`: The access key defaults to ENV["AWS_ACCESS_KEY_ID"]. 
+* `AWS Access Key`: The access key defaults to `ENV["AWS_ACCESS_KEY_ID"]`. 
 If the environment variable is not set the value should be provided as an option while using the executable, 
 ie. `--aws-access-key KEY`
-* `AWS Secret Access Key`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
+* `AWS Secret Access Key`: The secret access key defaults to `ENV["AWS_SECRET_ACCESS_KEY"]`.
 If the environment variable is not set the value should be provided as an option while using the executable, 
 ie. `--aws-secret-access-key KEY`
 * `AWS Region`: The region on which the volumes have been created. Needs to be provided as an option, 
