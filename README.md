@@ -24,7 +24,7 @@ Features
 * Recognizes XFS filesystems, and looks up mount points automatically
 * Freezes XFS filesystems while creating the snapshot, resulting in a consistent snapshot
 * Easy integration within Chef, requiring a very simple recipe that only requires (globally defined) AWS credentials and a region
-* Easy integration within your own scripts with either the executable or by instantiating the EC2Instance class yourself
+* Easy integration within your own scripts with either the executable or by instantiating the Ec2Snapshot::Instance class yourself
 * Custom actions that need to be executed before and/or after the snapshot is created can be easily configured
 
 
@@ -62,7 +62,7 @@ ie. `--aws-access-key KEY`
 * `AWS Secret Access Key`: The secret access key defaults to ENV["AWS_SECRET_ACCESS_KEY"].
 If the environment variable is not set the value should be provided as an option while using the executable, 
 ie. `--aws-secret-access-key KEY`
-* `AWS Region: The region on which the volumes have been created. Needs to be provided as an option, 
+* `AWS Region`: The region on which the volumes have been created. Needs to be provided as an option, 
 ie. `--aws-region eu-west-1`
 
 The gem makes a distinction between root volumes and data volumes. The root volume is the volume on which the OS 
