@@ -3,8 +3,8 @@ require File.expand_path("../lib/ec2_snapshot/version", __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = "ec2-snapshot"
-  gem.authors       = ["mattijsvandruenen"]
-  gem.email         = ["m.vandruenen@voormedia.com"]
+  gem.authors       = ["mattijsvandruenen", "Panagiotis Papadomitsos"]
+  gem.email         = ["m.vandruenen@voormedia.com", "pj@ezgr.net"]
   gem.description   = %q{EC2 EBS Volume Snapshotting}
   gem.summary       = %q{Create consistent snapshots of EBS volumes on Amazon EC2 instances.}
   gem.homepage      = "https://github.com/voormedia/ec2-snapshot"

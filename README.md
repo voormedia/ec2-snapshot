@@ -22,11 +22,11 @@ Features
 
 * No need to specify instance id and volume ids while using the gem
 * Recognizes XFS filesystems, and looks up mount points automatically
-* Freezes XFS filesystems while creating the snapshot, resulting in a consistent snapshot
+* Freezes XFS filesystems while creating the snapshot, resulting in a consistent snapshot. If running on kernels > 2.6.29, freezes a set of supported filesystems
 * Easy integration within Chef, requiring a very simple recipe that only requires (globally defined) AWS credentials and a region
 * Easy integration within your own scripts with either the executable or by instantiating the `Ec2Snapshot::Instance` class yourself
 * Custom actions that need to be executed before and/or after the snapshot is created can be easily configured
-
+* Allows temporal (i.e. snapshots older than 1 month) and numeric (i.e. the last 7 snapshots) snapshot rotation
 
 Requirements
 ------------
@@ -36,6 +36,7 @@ There are some requirements for using this gem:
 * The gem only works on Linux, as it has dependencies on files such as `/etc/hostname` and `/proc/mounts`
 * `wget` needs to be installed. This is required to automatically retrieve the current instance id
 * `xfs_freeze` (included in xfsprogs package) needs to be installed in order to be able to freeze a XFS filesystem to get a consistent snapshot
+* `fsfreeze`(included in util-linux-ng package) needs to be installed in order to be able to freeze a generic filesystem to get a consistent snapshot (supported for kernels > 2.6.29)
 
 
 Getting started

@@ -1,64 +1,119 @@
 #!/usr/bin/env ruby
 
-require "ec2_snapshot"
-require "optparse"
-require "date"
+require 'ec2_snapshot'
+require 'optparse'
+require 'date'
 
 options = Hash.new
 
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: ec2-snapshot [options]"
 
-  options[:volume_type] = :all
-  opts.on("--volume-type TYPE", [:all, :root, :data], "Volume types that need to be snapshotted (all/root/data). Defaults to all.") do |volume_type|
+  opts.on('--volume-type TYPE', [:all, :root, :data], 'Volume types that need to be snapshotted (all/root/data). Mutually exclusive with --devices. Defaults to all.') do |volume_type|
     options[:volume_type] = volume_type
   end
 
-  options[:aws_access_key] = ENV["AWS_ACCESS_KEY_ID"]
-  opts.on("--aws-access-key KEY", "AWS Access Key.Either set ENV[\"AWS_ACCESS_KEY_ID\"] or provide it as an option.") do |access_key|
+  opts.on('--devices DEVICES', 'Comma separated specific device names (e.g. sda,sdb) that need to be snapshotted. Mutually exclusive with --volume-type. Optional.') do |devices|
+    options[:devices] = devices
+  end
+
+  options[:aws_access_key] = ENV['AWS_ACCESS_KEY_ID']
+  opts.on('--aws-access-key KEY', 'AWS Access Key. Either set ENV["AWS_ACCESS_KEY_ID"] or provide it as an option.') do |access_key|
     options[:aws_access_key] = access_key
   end
 
-  options[:aws_secret_access_key] = ENV["AWS_SECRET_ACCESS_KEY"]
-  opts.on("--aws-secret-access-key KEY", "AWS Secret Access Key. Either set ENV[\"AWS_SECRET_ACCESS_KEY\"] or provide it as an option.") do |secret_access_key|
+  options[:aws_secret_access_key] = ENV['AWS_SECRET_ACCESS_KEY']
+  opts.on('--aws-secret-access-key KEY', 'AWS Secret Access Key. Either set ENV["AWS_SECRET_ACCESS_KEY"] or provide it as an option.') do |secret_access_key|
     options[:aws_secret_access_key] = secret_access_key
   end
 
-  opts.on("--aws-region REGION", "AWS Region. Mandatory. Example regions are eu-west-1 and us-west-1") do |region|
+  opts.on('--aws-region REGION', 'AWS Region. Mandatory. Example regions are eu-west-1 and us-west-1') do |region|
     options[:aws_region] = region
   end
 
-  opts.on("--before BEFORE", "Shell command to run before volume is snapshotted. Optional.") do |before|
+  opts.on('--before BEFORE', 'Shell command to run before volume is snapshotted. Optional.') do |before|
     options[:before] = before
   end
 
-  opts.on("--after AFTER", "Shell command to run after volume is snapshotted. Optional.") do |after|
+  opts.on('--after AFTER', 'Shell command to run after volume is snapshotted. Optional.') do |after|
     options[:after] = after
   end
 
-  opts.on("--delete-older-than MONTHS", "Delete snapshots for this instance that are older than # months. Optional.") do |months|
+  opts.on('--delete-older-than MONTHS', "Delete snapshots for this instance that are older than # months. Optional.") do |months|
     options[:delete_older_than] = months.to_i
   end
 
+  opts.on('--keep-only SNAPSHOTS', 'Keep only the latest SNAPSHOTS set of backups. Useful for keeping a set of rotating snapshots. Optional') do |snapshots|
+    options[:keep_only] = snapshots.to_i
+  end
+
+  options[:maint_only] = false
+  opts.on('--maintenance-only', 'Perform snapshot maintenance only (cleanup older snapshots)') do
+    options[:maint_only] = true
+  end
+
+  options[:skip_pending] = false
+  opts.on('--skip-pending', 'Skip the snapshot creation process for a specific volume if there are snapshots pending completion for it') do
+    options[:skip_pending] = true
+  end
+
   options[:verbose] = false
-  opts.on("-v", "--verbose", "Display progress output.") do |verbose|
+  opts.on('-v', '--verbose', 'Display progress output.') do |verbose|
     options[:verbose] = verbose
   end
 
-  opts.on("-h", "--help", "Display this screen.") do
+  opts.on('-h', '--help', 'Display this screen.') do
     puts opts
     exit
   end
 end
 
-optparse.parse!
-
-if options[:aws_access_key].nil? or options[:aws_secret_access_key].nil? or options[:aws_region].nil?
-  Kernel.abort("Not all mandatory options have been provided. Exiting.")
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption => e
+  puts e.message
+  puts optparse.to_s
+  exit
 end
 
-instance = Ec2Snapshot::Instance.new(options)
-instance.enable_rootvol_snapshot if [:all, :root].include?(options[:volume_type])
-instance.enable_datavol_snapshot if [:all, :data].include?(options[:volume_type])
-instance.create_snapshots
+if options[:aws_access_key].nil? || options[:aws_secret_access_key].nil?
+  Kernel.abort('Not all mandatory options have been provided. Exiting.')
+end
+
+begin
+  options[:aws_region] ||= Ec2Snapshot::Utils.query_instance_region 
+rescue Exception => e
+  Kernel.abort(e.message)
+end
+
+if options.include?(:delete_older_than) && options.include?(:keep_only)
+  Kernel.abort('Please choose only only of [--keep-only] and [--delete-older-than] options')
+end
+
+if options.include?(:devices) && options.include?(:volume_type)
+  Kernel.abort('Please choose only only of [--devices] and [--volume-type] options')
+end
+
+if ((options[:maint_only]) && (! (options.include?(:keep_only) || options.include?(:delete_older_than))))
+  Kernel.abort('You cannot specify --maintenance-only without selecting either --keep-only or --delete-older-than')
+end
+
+begin
+  instance = Ec2Snapshot::Instance.new(options) 
+rescue Exception => e
+  Kernel.abort(e.message)
+end
+
+if options.include?(:devices)
+  # Enabling for all kinds of devices, we'll only select the device(s) we need in volume population
+  instance.enable_rootvol_snapshot
+  instance.enable_datavol_snapshot
+  instance.enable_devices_snapshot(options[:devices])
+else
+  options[:volume_type] ||= :all
+  instance.enable_rootvol_snapshot if [:all, :root].include?(options[:volume_type])
+  instance.enable_datavol_snapshot if [:all, :data].include?(options[:volume_type])
+end
+instance.create_snapshots unless options[:maint_only]
 instance.delete_snapshots(Date.today << options[:delete_older_than]) if options.include?(:delete_older_than)
+instance.rotate_snapshots(options[:keep_only]) if options.include?(:keep_only)

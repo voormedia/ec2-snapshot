@@ -1,1 +1,1 @@
-require 'ec2_snapshot'
+require_relative 'ec2_snapshot'
