@@ -42,7 +42,7 @@ module Ec2Snapshot
           puts "-> Root mount point detected. No unfreezing action performed for volume #{@volume_id}" if @instance.verbose
         elsif @fsfreeze_support && @mount_point && [ 'xfs', 'ext3', 'ext4', 'brtfs' ].include?(@file_system)
           puts "-> fsfreeze-supporting kernel detected. Unfreezing filesystem for volume #{@volume_id}" if @instance.verbose
-          Kernel.system("fsfreeze -f #{@mount_point}")
+          Kernel.system("fsfreeze -u #{@mount_point}")
         else
           if @mount_point && @file_system == "xfs"
             puts "-> Unfreezing XFS filesystem for volume #{@volume_id}" if @instance.verbose
